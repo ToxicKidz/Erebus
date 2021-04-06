@@ -57,7 +57,7 @@ class BaseFlag:
                 raise ValueError(f"{flag!r} is not a valid flag name for {self.__class__.__name__!r}.")
 
     def __eq__(self, other: BaseFlag) -> bool:
-        return self.value == other.value
+        return hasattr(other, 'value') and self.value == other.value
 
     @classmethod
     def _from_value(cls, value: int):
