@@ -1,6 +1,6 @@
 from aiohttp import ClientSession, ContentTypeError
 from functools import partialmethod
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from . import __version__
 
@@ -473,4 +473,54 @@ class Rest:
         
         return await self.patch(get_api_url('/guilds'), json=payload)
 
-# There are still many more but I'm too lazy to finish it
+    async def delete_guild(self, guild_id: int) -> RequestResponse:
+        return await self.delete(get_api_url(f'/guilds/{guild_id}'))
+
+    async def create_guild_channel(
+        self,
+        guild_id: int,
+        *,
+        name: str,
+        type: Optional[int] = None,
+        topic: Optional[str] = None,
+        bitrate: Optional[int] = None,
+        user_limit: Optional[int] = None,
+        rate_limit_per_user: Optional[int] = None,
+        position: Optional[int] = None,
+        permission_overwrites: Optional[List[Dict['str', Any]]] = None,
+        parent_id: Optional[int],
+        nsfw: Optional[bool] = None
+    ) -> RequestResponse:
+        payload = {'name': name}
+
+        if type is not None:
+            payload['type'] = type
+        
+        if topic is not None:
+            payload['topic'] = topic
+        
+        if bitrate is not None:
+            payload['bitrate'] = bitrate
+        
+        if user_limit is not None:
+            payload['user_limit'] = bitrate
+        
+        if rate_limit_per_user is not None:
+            payload['rate_limit_per_user'] = rate_limit_per_user
+        
+        if position is not None:
+            payload['position'] = position
+        
+        if permission_overwrites is not None:
+            payload['permission_overwrites'] = permission_overwrites
+        
+        if parent_id is not None:
+            payload['parent_id'] = parent_id
+        
+        if nsfw is not None:
+            payload['nsfw'] = nsfw
+        
+        return await self.post(get_api_url(f'/guilds/{guild_id}/channels'), json=payload)
+    
+    async def modify_channel_position(self, guild_id: int, channel_id: int, position: Optional[int]):
+        return await self.patch(get_api_url(f'/guilds/{guild_id}/channels'), json={'id': channel_id, 'position': position})
