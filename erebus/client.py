@@ -55,6 +55,10 @@ class Client:
         await self.login(*args, **kwargs)
         await self.connect()
     
+    def run(self, *args, **kwargs):
+        self.loop.run_until_complete(self.start(*args, **kwargs))
+        self.loop.close()
+    
     async def dispatch_event(self, event_name: str, *args, **kwargs):
         for listener in filter(lambda l: l.event_name == event_name, self._listeners):
             await listener(*args, **kwargs)

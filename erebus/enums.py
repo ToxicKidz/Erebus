@@ -1,5 +1,7 @@
 from enum import IntEnum, IntFlag
 
+__all__ = ('DiscordOpcode', 'Intents')
+
 class DiscordOpcode(IntEnum):
     DISPATCH = 0
     HEARTBEAT = 1
