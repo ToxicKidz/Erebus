@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Flag as EnumFlag
 from typing import Optional, Type, Union
 
-from .enums import Intents
+from .enums import Intents, MessageFlags as _MessageFlags
 
 class Flag:
 
@@ -35,7 +35,7 @@ class FlagAlias:
         return all(getattr(instance, flag.name.lower()) for flag in self.flags)
 
 class BaseFlag:
-    value = 0 # This is the default value for intents
+    value = 0 # This is the default value for flags
 
     def __init_subclass__(cls, flag_cls: Type[EnumFlag]) -> None:
         cls.flag_names = []
@@ -60,9 +60,12 @@ class BaseFlag:
         return hasattr(other, 'value') and self.value == other.value
 
     @classmethod
-    def _from_value(cls, value: int):
+    def _from_value(cls, value: Optional[int]):
+        if value is None:
+            return value
+
         self = cls()
-        object.__setattr__(self, 'value', value)
+        setattr(self, 'value', value)
 
 class Intents(BaseFlag, flag_cls=Intents):
     members = FlagAlias(Intents.GUILD_MEMBERS) # Let's just shorten the `guild_` prefix 
@@ -92,3 +95,6 @@ class Intents(BaseFlag, flag_cls=Intents):
         intents.members = False
         intents.presences = False
         return intents
+
+class MessageFlags(BaseFlag, enum=_MessageFlags):
+    pass
